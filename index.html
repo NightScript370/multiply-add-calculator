@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Multiply/Add Calculator</title>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.css" rel="stylesheet"/>
+        <style>
+            .parent {
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                grid-column-gap: 0px;
+
+                grid-row-gap: 1px;
+                border-radius: .5rem;
+                background-color: rgb(189,189,189);
+            }
+
+            body {
+                padding: 5vw;
+            }
+
+            input.form-control {
+                border-radius: 0;
+            }
+
+            .instructions {
+                border: 1px solid #bdbdbd;
+                padding: .26rem .75rem;
+                font-weight: 400;
+                color: #4f4f4f;
+                text-align: center;
+                background-color: #eee;
+            }
+    
+            #div1 {
+                grid-area: 1 / 1 / 3 / 2;
+                border-top-left-radius: .5rem;
+                border-bottom-left-radius: .5rem;
+                border-style: solid;
+                border-width: 1px;
+                border-color: rgb(189,189,189);
+                border-right-width: 0;
+            }
+            #div1 input {
+                border-top-left-radius: .5rem;
+                border-bottom-left-radius: .5rem;
+            }
+            #div2 { grid-area: 1 / 2 / 2 / 3; border-bottom: 0; }
+            #div3 { grid-area: 2 / 2 / 3 / 3; border-top: 0; }
+            #div4 {
+                grid-area: 1 / 3 / 3 / 4;
+                border-style: solid;
+                border-width: 1px;
+                border-left-width: 0;
+                border-right-width: 0;
+                border-color: rgb(189,189,189);
+            }
+            #div5 { grid-area: 1 / 4 / 3 / 5;
+                display: flex;
+                justify-content: center;
+                align-content: center;
+                flex-direction: column;
+                border-right-width: 0;
+            }
+            #div6 { grid-area: 1 / 5 / 2 / 6; }
+            #div7 { grid-area: 2 / 5 / 3 / 6; }
+
+            #div6 input { border-top-right-radius: .5rem; border-bottom: 0; }
+            #div7 input { border-bottom-right-radius: .5rem; border-top: 0; }
+            input {
+                height: 100%;
+            }
+
+            #div1 input, #div4 input {
+                text-align: center;
+            }
+
+            .outline-input-container {
+                position: relative;
+            }
+
+            .outline-input-container .label {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 16px;
+                display: flex;
+                align-items: center;
+                pointer-events: none;
+            }
+
+            .outline-input-container .label .text {
+                color: grey;
+            }
+
+            .outline-input-container input:focus {
+                outline: none;
+                border: 1px solid blue;
+            }
+
+            .outline-input-container input:focus + .label .text, .outline-input-container :not(input[value=""]) + .label .text {
+                font-size: 12px;
+                transform: translate(0, 100%);
+                background-color: white;
+                padding-left: 4px;
+                padding-right: 4px;
+            }
+
+            .outline-input-container input:focus[name="multiplicationSum"] + .label .text, .outline-input-container :not(input[value=""])[name="multiplicationSum"] + .label .text {
+                transform: translate(0, -100%);
+            }
+
+            .outline-input-container input:focus + .label .text {
+                color: blue;
+            }
+
+            footer a.btn:not(:focus-visible) {
+                opacity: 0;
+                cursor: default;
+            }
+        </style>
+    </head>
+    <body>
+        <header class="text-center">
+            <h1>Factorization Calculator</h1>
+            <p>If you have the sum of two numbers as well as the product those numbers, you can use this online calculator to calculate the actual numbers for you</p>
+        </header>
+        <article class="parent">
+            <div id="div1" class="form-outline">
+                <input class="form-control" id="firstNum" type="number" value="" aria-label="First-Number of Operation" readonly />
+            </div>
+            <div id="div2" class="instructions">*</div>
+            <div id="div3" class="instructions">+</div>
+            <div id="div4" class="form-outline">
+                <input class="form-control" id="secondNum" type="number" value="" aria-label="Second-Number of Operation" readonly />
+            </div>
+            <div id="div5" class="instructions"><span>=</span></div>
+            <div id="div6" class="outline-input-container">
+                <input class="form-control" type="number" id="multiplicationSum" name="multiplicationSum" value="" aria-labelledby="label-multiplicationSum"/>
+                <label class="label" for="multiplicationSum" id="label-multiplicationSum"><div class="text">Multiplication-Sum</div></label>
+            </div>
+            <div id="div7" class="outline-input-container">
+                <input class="form-control" type="number" id="additionSum" name="additionSum" value="" aria-labelledby="label-additionSum"/>
+                <label class="label" for="additionSum" id="label-additionSum"><div class="text">Addition-Sum</div></label>
+            </div>
+        </article>
+        <footer class="text-center">
+            <p class="pt-2">If the results are blank, there are no real numbers that fulfill the requirements.</p>
+            <a href="#div1" class="btn btn-primary">Return to Top</a>
+        </footer>
+        <script>
+            // Initiation
+            const sumsElements = ["multiplicationSum", "additionSum"].map(id => document.getElementById(id));
+            const inputFieldSetter = (inputField) => inputField.setAttribute('value', inputField.value)
+
+            for (let initialSumField of sumsElements)
+                inputFieldSetter(initialSumField) // Done for left-over
+
+            document.addEventListener('DOMContentLoaded', () => {
+                func(); // Done for left-over
+
+                for (let eventField of sumsElements) {
+                    eventField.addEventListener('input', () => {
+                        inputFieldSetter(eventField);
+                        func();
+                    })
+                }
+            })
+
+            const readOnly = ["firstNum", "secondNum"].map(id => document.getElementById(id));
+            function func() {
+                const results = [];
+                const numbers = sumsElements.map(element => parseInt(element.value))
+                results.push(-2 * numbers[0] / (-1 * numbers[1] + Math.sqrt(numbers[1] * numbers[1] - 4 * numbers[0])));
+			    results.push(-2 * numbers[0] / (-1 * numbers[1] - Math.sqrt(numbers[1] * numbers[1] - 4 * numbers[0])));
+
+                if (results.every(num => !isNaN(num))) {
+                    for (let resultIndex in results) {
+                        let number = results[resultIndex];
+                        readOnly[resultIndex].setAttribute("value", number);
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
